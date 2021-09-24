@@ -2,20 +2,21 @@
 from django.urls import path, include
 from django.urls.conf import include
 from rest_framework import routers
-from .views import (Shopping_cartViewSet, FavoriteViewSet,
-                    Quantity_ingredientsViewSet, RecipeViewSet, 
-                    TagViewSet, IngredientsViewSet)
+from .views import (
+    Shopping_cartViewSet, Dounload_shopping_cartViewSet, FavoriteViewSet,
+    Quantity_ingredientsViewSet, RecipeViewSet, TagViewSet, IngredientsViewSet)
 
-router = routers.DefaultRouter()
-router.register(r'recipes', RecipeViewSet, basename='recipes')
-router.register(r'recipes/(?P<id>[0-9]+)/favorite', FavoriteViewSet, basename='favorite')
-router.register(r'recipes/download_shopping_cart', Shopping_cartViewSet, basename='shopping_cart')
-router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
-router.register(r'tags', TagViewSet, basename='tag')
+food_router = routers.DefaultRouter()
+food_router.register(r'recipes/(?P<id>[0-9]+)/favorite', FavoriteViewSet, basename='favorite')
+food_router.register(r'recipes/download_shopping_cart', Dounload_shopping_cartViewSet, basename='dounload_shopping_cart')
+food_router.register(r'recipes/(?P<id>[0-9]+)/shopping_cart', Shopping_cartViewSet, basename='dounload_shopping_cart')
+food_router.register(r'recipes', RecipeViewSet, basename='recipes')
+food_router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
+food_router.register(r'tags', TagViewSet, basename='tag')
 
 urlpatterns = [
     
-    path('', include(router.urls)),
+    path('', include(food_router.urls)),
 ]
 
 

@@ -4,14 +4,15 @@ from django.urls.conf import include
 from rest_framework import routers
 from .views import (SubscriptionViewSet, UsersViewSet, SubscribeViewSet)
 
-user_router = routers.DefaultRouter()
-user_router.register(r'', UsersViewSet, basename='users')
-user_router.register(r'subscriptions', SubscriptionViewSet, basename='subscriptions')
-user_router.register(r'(?P<id>[0-9]+)/subscribe', SubscribeViewSet, basename='subscribe')
+users_router = routers.DefaultRouter()
+
+users_router.register(r'subscriptions', SubscriptionViewSet, basename='subscriptions')
+users_router.register(r'(?P<id>[0-9]+)/subscribe', SubscribeViewSet, basename='subscribe')
+users_router.register(r'', UsersViewSet, basename='users')
 
 urlpatterns = [
     
-    path('', include(user_router.urls)),
+    path('', include(users_router.urls)),
 ]
 
 

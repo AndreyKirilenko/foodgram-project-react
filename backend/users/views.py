@@ -13,17 +13,17 @@ from rest_framework.viewsets import ModelViewSet
 #                                     IsAuthorAdminModeratorOrReadOnly)
 
 # from .filters import TitleFilter
-from .models import Subscription
-# from .serializers import (CategorySerializer, CommentSerializer,
-#                           GenreSerializer, ReviewSerializer, TitleSerializer,
-#                           TitleSlugSerializer)
+from .models import Subscription, CustomUser
+from .serialisers import (SubscriptionSerializer, )
 
-class UsersViewSet(viewsets.ModelViewSet):
+
+class CustomUserViewSet(viewsets.ModelViewSet):
     pass
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    pass
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
