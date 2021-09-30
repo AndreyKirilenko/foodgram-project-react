@@ -1,17 +1,36 @@
 from django.contrib import admin
-from .models import Subscription, CustomUser
 from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser, Subscription
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
-# @admin.register(CustomUser)
-# class CustomUserAdmin(UserAdmin):
-#     list_display = ('email', 'first_name', 'last_name', 'role')
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    # add_form = CustomUserCreationForm
+    # form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ('username', 'first_name', 'last_name', 'email', 'role',)
+    
 
-admin.site.register(CustomUser, UserAdmin)
+    add_fieldsets = (
+        *UserAdmin.add_fieldsets,
+        (
+            'CustomFields',
+            {
+                'fields': (
+                    'role',
+                    'email',
+                )
+            }
+
+        )
+    )
+
+    fieldsets = (*UserAdmin.fieldsets, ('CustomFields', {'fields': ('role', )}))
+
 
 @admin.register(Subscription)
-class Subscription(admin.ModelAdmin):
-    list_display = ('user', 'author', )
-    # search_fields = ('text',)
-    # list_filter = ('pub_date',)
-    # empty_value_display = ' - нет записи - '
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ['user', 'author',]
+
+

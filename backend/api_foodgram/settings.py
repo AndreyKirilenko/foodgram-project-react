@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,30 +21,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')9qlsi=31*xad=sr7_iooa3t%ce8w$*)xc0=i(&13=9tauv4!6'
+SECRET_KEY = 'l!2ej4o@bh947h+ac&3okup!ms-zq9#5&7ahlu0p+i!0*w!2ql'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', ]
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    
-    'django.contrib.admin',
     'django.contrib.auth',
+    'rest_framework',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'foodgram',
-    'djoser',
     'rest_framework.authtoken',
     'users',
+    'djoser',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -88,7 +87,6 @@ DATABASES = {
 }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -107,6 +105,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 5
+}
+
+# SIMPLE_JWT = {
+#     'AUTH_HEADER_TYPES': ('JWT',),
+#     # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+#     # 'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+# }
+
+# if DEBUG:
+#     SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(days=365)
+#     SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'] = timedelta(days=365)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -127,20 +149,33 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # ],
-    # 'DEFAULT_FILTER_BACKENDS': [
-    #     'django_filters.rest_framework.DjangoFilterBackend'
-    # ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 100
-}
-
 AUTH_USER_MODEL = 'users.CustomUser'
 
+DJOSER = {
+    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    # 'SEND_ACTIVATION_EMAIL': True,
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
+        'user_create': 'users.serializers.CustomUserSerializer',
+    },
+    'PERMISSIONS': {
+    #     'activation': ['rest_framework.permissions.AllowAny'],
+    #     'password_reset': ['rest_framework.permissions.AllowAny'],
+    #     'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    #     'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
+    #     'username_reset': ['rest_framework.permissions.AllowAny'],
+    #     'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    #     'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user_create': ['rest_framework.permissions.AllowAny'],
+    #     'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    #     # 'user_list': ['djoser.permissions.CurrentUserOrAdmin'],
+    #     'token_create': ['rest_framework.permissions.AllowAny'],
+    #     'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+    }
+}
