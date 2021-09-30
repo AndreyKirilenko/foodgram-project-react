@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users',
     'djoser',
     'rest_framework_simplejwt',
+    'foodgram',
 ]
 
 MIDDLEWARE = [

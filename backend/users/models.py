@@ -5,17 +5,6 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
 
-# class ConfirmationCode(models.Model):
-
-#     email = models.EmailField(null=False, unique=True)
-#     confirmation_code = models.CharField(
-#         max_length=20,
-#         blank=True,
-#         editable=False,
-#         null=True,
-#         unique=True)
-
-
 class CustomUser(AbstractUser):
 
     class UserRole(models.TextChoices):
