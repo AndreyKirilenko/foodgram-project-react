@@ -1,3 +1,4 @@
+import re
 import uuid
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -6,15 +7,9 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class Ingredients(models.Model):  # Ингрединент
-    name = models.CharField(
-        max_length=100, 
-        verbose_name='Название ингредиента',
-    )
-    measurement_unit = models.CharField(
-        max_length=10, 
-        verbose_name='Еденица измерения',
-    )
+class Ingredients(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Название ингредиента')
+    measurement_unit = models.CharField(max_length=10, verbose_name='Еденица измерения')
 
     class Meta:
         indexes = [
@@ -28,20 +23,13 @@ class Ingredients(models.Model):  # Ингрединент
         return self.name
 
 
-class Tag(models.Model):  # Тег
-    name = models.CharField(
-        max_length=200, 
-        verbose_name='Имя тега',
-    )
-    color = models.CharField(
-        max_length=7, 
-        verbose_name='Цвет в HEX',
-    )
+class Tag(models.Model):
+    name = models.CharField(max_length=200, verbose_name='Имя тега')
+    color = models.CharField(max_length=7, verbose_name='Цвет в HEX')
     slug = models.SlugField(
         max_length=200,
         verbose_name='Уникальный слаг',
         unique=True,
-        # default=uuid.uuid1
     )
 
     class Meta:
@@ -52,17 +40,17 @@ class Tag(models.Model):  # Тег
     def __str__(self):
         return self.name
 
-class Recipe(models.Model):  # Рецепт
-    tags = models.ManyToManyField(Tag, verbose_name='Теги',)
+class Recipe(models.Model):
+    tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='recipe')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="authors_recipie",
+        related_name="recipe",
         verbose_name='Автор рецепта',
     )
     ingredients = models.ManyToManyField(
         Ingredients, 
-        related_name= 'ingredientos',
+        related_name= 'resipe',
         through='Quantity_ingredients',
         through_fields= ('recipe', 'ingredient'),
         verbose_name='Ингридиенты', 
@@ -91,16 +79,16 @@ class Recipe(models.Model):  # Рецепт
 
 
 class Quantity_ingredients(models.Model):  # Количество ингредиентов
-    ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE, related_name='amount')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='amount')
     amount = models.IntegerField(
         validators=[MinValueValidator(1, 'Минимальное значение: 1'),],
     )
 
 
-class Favorite(models.Model):  # Избранное
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorite')
 
     class Meta:
         verbose_name = 'Избранное'
@@ -112,9 +100,9 @@ class Favorite(models.Model):  # Избранное
         ]
 
 
-class Shopping_cart(models.Model):  # Список покупок
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+class Shopping_cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shoping_cart')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='shoping_cart')
 
     class Meta:
         verbose_name = 'Список покупок'

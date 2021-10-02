@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from django.shortcuts import get_object_or_404
-# from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.pagination import PageNumberPagination
 # from rest_framework.response import Response
@@ -33,6 +33,8 @@ class Quantity_ingredientsViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['author', 'tags']
 
 
 class TagViewSet(viewsets.ModelViewSet):
