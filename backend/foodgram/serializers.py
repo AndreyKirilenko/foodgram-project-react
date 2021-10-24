@@ -1,18 +1,21 @@
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
 from .models import Ingredients, Tag, Recipe, Quantity_ingredients, Favorite, Shopping_cart
+from django.shortcuts import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 
 
 class Shopping_cartSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Shopping_cart
-        fields = ('__all__')
+        fields = ('id', 'user', 'recipe')
 
 
 class TagSerialiser(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('__all__')
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class Quantity_ingredientsSerializer(serializers.ModelSerializer):
@@ -29,12 +32,13 @@ class Quantity_ingredientsSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     ingredients = Quantity_ingredientsSerializer(
-        source='amount', many=True, read_only=True, # Взял значение из модели Quantity_ingredients ?? Как?
+        source='amount', many=True, read_only=True # Взял значение из модели Quantity_ingredients ?? Как?
     )
     author = CustomUserSerializer(read_only=True)
     tags = TagSerialiser(many=True, read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -51,14 +55,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             'cooking_time', 
         )
     
-    def get_ingredients(self, obj):
-        qs = Quantity_ingredients.objects.filter(recipe=obj)
-
-        # return IngredientSerializer(many=True, read_only=True).data
-        # return IngredientSerializer(qs, many=True).data
 
 
     def get_is_favorited(self, obj):
+        ''''Показывает есть ли в избраном у текущего юзера'''
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -67,9 +67,63 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_in_shopping_cart(self, obj):
+        ''''Показывает есть ли в списке покупок у текущего юзера'''
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
         if Shopping_cart.objects.filter(user=request.user, recipe=obj).exists():
             return True
         return False
+
+    # def validate(self, data):
+    #     request = self.context.get('request')
+    #     if request is None or request.user.is_anonymous:
+    #         raise serializers.ValidationError("Пользователь не авторизован!")
+    #     return data
+
+    def create(self, validated_data):
+        ''''Переопределяем для сохранения ингредиентов и тегов'''
+        image = validated_data.pop('image')
+        author = self.context['request'].user
+        recipe = Recipe.objects.create(image=image, author=author, **validated_data)
+        
+        ingredients = self.initial_data.get('ingredients')
+        for ingredient in ingredients:
+            Quantity_ingredients.objects.create(
+                ingredient_id= ingredient.get('id'),
+                recipe=recipe,
+                amount=ingredient.get('amount')
+            )
+
+        tags = self.initial_data.get('tags')
+        for tag_id in tags:
+            recipe.tags.add(get_object_or_404(Tag, pk=tag_id))
+        
+        return recipe
+
+
+    def update(self, instance, validated_data):
+        ''''Переопределяем для сохранения ингредиентов и тегов'''
+        # import pdb; pdb.set_trace()
+        instance.author=validated_data.get('author', instance.author)
+        instance.image=validated_data.get('image', instance.image)
+        instance.name=validated_data.get('name', instance.name)
+        instance.text=validated_data.get('text', instance.text)
+        instance.cooking_time=validated_data.get('cooking_time', instance.cooking_time)
+        
+        instance.tags.clear()
+        tags = self.initial_data.get('tags')
+        for tag in tags:
+            instance.tags.add(get_object_or_404(Tag, pk=tag))
+
+        instance.ingredients.clear()
+        ingredients = self.initial_data.get('ingredients')
+        for ingredient in ingredients:
+            Quantity_ingredients.objects.create(
+                ingredient_id= ingredient.get('id'),
+                recipe=instance,
+                amount=ingredient.get('amount')
+            )
+        instance.save()
+        return instance
+

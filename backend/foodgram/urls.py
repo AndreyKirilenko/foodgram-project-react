@@ -6,9 +6,10 @@ from .views import (Shopping_cartViewSet, FavoriteViewSet,
                     TagViewSet, IngredientsViewSet)
 
 router = routers.DefaultRouter()
-router.register(r'recipes', RecipeViewSet, basename='recipes')
+
+router.register(r'recipes/(?P<id>[0-9]+)/shopping_cart', Shopping_cartViewSet)
 router.register(r'recipes/(?P<id>[0-9]+)/favorite', FavoriteViewSet, basename='favorite')
-router.register(r'recipes/download_shopping_cart', Shopping_cartViewSet, basename='shopping_cart')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
 router.register(r'tags', TagViewSet, basename='tag')
 

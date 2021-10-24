@@ -24,7 +24,7 @@ class Ingredients(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Имя тега')
+    name = models.CharField(max_length=200, verbose_name='Имя тега',)
     color = models.CharField(max_length=7, verbose_name='Цвет в HEX')
     slug = models.SlugField(
         max_length=200,
@@ -56,7 +56,7 @@ class Recipe(models.Model):
         verbose_name='Ингридиенты', 
     )
     name = models.CharField(max_length=200, verbose_name='Название рецепта',)
-    image = models.ImageField(verbose_name='Изображение рецепта',)
+    image = models.ImageField(upload_to='images',verbose_name='Изображение рецепта',)
     text = models.TextField(max_length=500, verbose_name='Описание',)
     cooking_time = models.IntegerField(
         validators=[
@@ -85,6 +85,9 @@ class Quantity_ingredients(models.Model):  # Количество ингреди
         validators=[MinValueValidator(1, 'Минимальное значение: 1'),],
     )
 
+    def __str__(self):
+        return f'{self.ingredient}, {self.amount}'
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite')
@@ -107,3 +110,8 @@ class Shopping_cart(models.Model):
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='add_shopping_cart'
+            ),
+        ]
