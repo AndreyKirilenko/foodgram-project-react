@@ -1,3 +1,4 @@
+from django.db.models.base import ModelStateFieldsCacheDescriptor
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
 from .models import Ingredients, Tag, Recipe, Quantity_ingredients, Favorite, Shopping_cart
@@ -9,6 +10,12 @@ class Shopping_cartSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Shopping_cart
+        fields = ('id', 'user', 'recipe')
+
+
+class FaviriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
         fields = ('id', 'user', 'recipe')
 
 
@@ -29,6 +36,15 @@ class Quantity_ingredientsSerializer(serializers.ModelSerializer):
         model = Quantity_ingredients
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
+class SmallRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = (
+            'id', 
+            'name', 
+            'image', 
+            'cooking_time', 
+        )
 
 class RecipeSerializer(serializers.ModelSerializer):
     ingredients = Quantity_ingredientsSerializer(
@@ -58,7 +74,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
     def get_is_favorited(self, obj):
-        ''''Показывает есть ли в избраном у текущего юзера'''
+        ''''Показывает есть ли рецепт в избраном у текущего юзера'''
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -67,7 +83,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_in_shopping_cart(self, obj):
-        ''''Показывает есть ли в списке покупок у текущего юзера'''
+        ''''Показывает есть ли рецепт в списке покупок у текущего юзера'''
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -75,11 +91,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    # def validate(self, data):
-    #     request = self.context.get('request')
-    #     if request is None or request.user.is_anonymous:
-    #         raise serializers.ValidationError("Пользователь не авторизован!")
-    #     return data
 
     def create(self, validated_data):
         ''''Переопределяем для сохранения ингредиентов и тегов'''
