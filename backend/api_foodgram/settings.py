@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,8 +44,6 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework_simplejwt',
     'foodgram',
-    'reportlab',
-    'wkhtmltopdf',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +116,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
-    # 'DEFAULT_PAGINATION_CLASS': 
+    # 'DEFAULT_PAGINATION_CLASS':
     #     'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 5
 }
@@ -167,19 +164,8 @@ DJOSER = {
         'user_create': 'users.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
-    #     'activation': ['rest_framework.permissions.AllowAny'],
-    #     'password_reset': ['rest_framework.permissions.AllowAny'],
-    #     'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
-    #     'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
-    #     'username_reset': ['rest_framework.permissions.AllowAny'],
-    #     'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
-    #     'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
-    #     'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
         'user': ['rest_framework.permissions.IsAuthenticated'],
         'user_list': ['rest_framework.permissions.AllowAny'],
-    #     # 'user_list': ['djoser.permissions.CurrentUserOrAdmin'],
-    #     'token_create': ['rest_framework.permissions.AllowAny'],
-    #     'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     }
 }

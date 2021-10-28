@@ -1,9 +1,10 @@
-from rest_framework import serializers
-from .models import CustomUser, Subscription
-from djoser.serializers import UserCreateSerializer
-from rest_framework.serializers import ValidationError
 import re
 
+from djoser.serializers import UserCreateSerializer
+from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
+from .models import CustomUser, Subscription
 
 
 class CustomUserSerializer(UserCreateSerializer):
