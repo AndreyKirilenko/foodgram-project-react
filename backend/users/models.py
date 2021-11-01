@@ -22,8 +22,6 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-
-
 class Subscription(models.Model):  # Подписка
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
