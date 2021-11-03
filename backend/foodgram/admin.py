@@ -7,7 +7,7 @@ from .models import Favorite, Ingredients, Recipe, Shopping_cart, Tag
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
-    # list_filter = ('pub_date',)
+    list_filter = ('name',)
     # empty_value_display = ' - нет записи - '
 
 
@@ -21,9 +21,9 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'image', 'text', 'cooking_time', 'pub_date',) # 'tags' ,'ingredients')
+    list_display = ('name', 'author', 'image', 'text', 'cooking_time', 'pub_date', ) # 'tags' ,'ingredients')
     search_fields = ('name',)
-    list_filter = ('pub_date', 'cooking_time')
+    list_filter = ('name', 'author', 'tags')
     date_hierarchy = 'pub_date'
     ordering = ('pub_date',)
     # empty_value_display = ' - нет записи - '

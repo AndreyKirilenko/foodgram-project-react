@@ -4,23 +4,24 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from traitlets.traitlets import validate
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from foodgram.permissions import IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly
-
+from rest_framework import filters
 from .filters import CustomFilter
-from .models import Favorite, Quantity_ingredients, Recipe, Shopping_cart, Tag
+from .models import Favorite, Ingredients, Quantity_ingredients, Recipe, Shopping_cart, Tag
 from .paginations import CustomPagination
 from .serializers import (FaviriteSerializer, RecipeSerializer,
                           Shopping_cartSerializer, SmallRecipeSerializer,
-                          TagSerialiser)
+                          TagSerialiser, IngredientSerializer)
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-    pass
+# class FavoriteViewSet(viewsets.ModelViewSet):
+#     pass
 
 
-class Quantity_ingredientsViewSet(viewsets.ModelViewSet):
-    pass
+# class Quantity_ingredientsViewSet(viewsets.ModelViewSet):
+#     pass
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -43,6 +44,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if is_in_shopping_cart is not None and self.request.user.is_authenticated:
             queryset = queryset.filter(shoping_cart__user=self.request.user)
         return queryset
+
+
+
 
     @action(
         methods=['get', 'delete'],
@@ -181,5 +185,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
 
 
-class IngredientsViewSet(viewsets.ModelViewSet):
-    pass
+class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = IngredientSerializer
+    queryset = Ingredients.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']

@@ -1,5 +1,7 @@
 import re
-from django.db.models import fields
+# from django.db.models import fields
+# from django.db.models import fields
+# from django.http import request
 
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
@@ -14,7 +16,7 @@ from .models import CustomUser, Subscription
 
 class CustomUserSerializer(UserCreateSerializer):
     is_subscribed = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = CustomUser
         fields = (
@@ -41,7 +43,7 @@ class CustomUserSerializer(UserCreateSerializer):
         return value
 
 
-class MiniRecipeSerializer(serializers.ModelSerializer):
+class FollowRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
@@ -54,22 +56,36 @@ class MiniRecipeSerializer(serializers.ModelSerializer):
 
 
 class FullCustomUserSerializer(CustomUserSerializer):
-    recipes = MiniRecipeSerializer(source='recipe', many=True, read_only=True
-    )
-    # recipes = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
         fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            'is_subscribed',
-            'recipes',
+            "email", "id", "username", "first_name", "last_name",
+            'is_subscribed', 'recipes', 'recipes_count',
             )
 
-    # def get_recipes(self, obj):
-    #     pass
+    def get_recipes(self, obj):
+        request = self.context.get('request')
 
+        if request is None:
+            recipes = Recipe.objects.filter(author=obj)
+            return FollowRecipeSerializer(recipes, many=True).data
+
+        recipes_limit = request.query_params.get('recipes_limit', None)
+        if recipes_limit is not None:
+            recipes = Recipe.objects.filter(author=obj)[:int(recipes_limit)]
+        else:
+            recipes = Recipe.objects.filter(author=obj)
+        return FollowRecipeSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscription
+        fields = ("__all__")

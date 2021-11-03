@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
         ADMIN = 'ADMIN', _('admin')
 
     username = models.CharField(null=False, unique=True, max_length=150)
-    email = models.EmailField(null=False, max_length=250)
+    email = models.EmailField(null=False, unique=True, max_length=250)
     first_name = models.CharField(null=False, max_length=150)
     last_name = models.CharField(null=False, max_length=150)
     role = models.CharField(max_length=20, choices=UserRole.choices, default=UserRole.USER)

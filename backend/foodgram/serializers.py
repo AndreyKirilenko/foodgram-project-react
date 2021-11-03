@@ -5,7 +5,18 @@ from rest_framework import serializers
 
 from users.serializers import CustomUserSerializer
 
-from .models import Favorite, Quantity_ingredients, Recipe, Shopping_cart, Tag
+from .models import (
+                    Favorite, Ingredients,
+                    Quantity_ingredients, Recipe,
+                    Shopping_cart, Tag,
+                    )
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredients
+        fields = ('__all__')
 
 
 class Shopping_cartSerializer(serializers.ModelSerializer):
