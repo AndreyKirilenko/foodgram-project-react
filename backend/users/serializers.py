@@ -1,15 +1,10 @@
 import re
-# from django.db.models import fields
-# from django.db.models import fields
-# from django.http import request
 
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-# from backend.foodgram.models import Recipe
 
 from foodgram.models import Recipe
-# from foodgram import serializers
 
 from .models import CustomUser, Subscription
 

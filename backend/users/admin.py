@@ -1,19 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomUserChangeForm, CustomUserCreationForm
 from .models import CustomUser, Subscription
 
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    # add_form = CustomUserCreationForm
-    # form = CustomUserChangeForm
     model = CustomUser
     list_display = ('username', 'first_name', 'last_name', 'email', 'role',)
     list_filter = ('username', 'email',)
-    
-
     add_fieldsets = (
         *UserAdmin.add_fieldsets,
         (
@@ -34,5 +29,4 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ['user', 'author',]
-
 

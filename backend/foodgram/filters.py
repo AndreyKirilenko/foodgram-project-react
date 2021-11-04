@@ -1,7 +1,7 @@
 import django_filters
 from django_filters import rest_framework
 
-from .models import Recipe, Tag
+from .models import Recipe
 
 
 class CustomFilter(rest_framework.FilterSet):
@@ -12,5 +12,3 @@ class CustomFilter(rest_framework.FilterSet):
     class Meta:
         model = Recipe
         fields = ['tags', 'author']
-
-

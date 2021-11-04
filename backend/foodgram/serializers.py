@@ -1,15 +1,11 @@
-
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from users.serializers import CustomUserSerializer
 
-from .models import (
-                    Favorite, Ingredients,
-                    Quantity_ingredients, Recipe,
-                    Shopping_cart, Tag,
-                    )
+from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
+                     Shopping_cart, Tag)
 
 
 class IngredientSerializer(serializers.ModelSerializer):

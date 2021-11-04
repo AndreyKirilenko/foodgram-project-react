@@ -1,16 +1,15 @@
-# from rest_framework import serializers
-from rest_framework import generics
-# from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
-from foodgram.paginations import CustomPagination
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
-from foodgram.models import User
-from .serializers import CustomUserSerializer, FullCustomUserSerializer, SubscriptionSerializer
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from .models import Subscription, CustomUser
 from rest_framework.serializers import ValidationError
+
+from foodgram.models import User
+from foodgram.paginations import CustomPagination
+
+from .models import CustomUser, Subscription
+from .serializers import (CustomUserSerializer, FullCustomUserSerializer,
+                          SubscriptionSerializer)
 
 
 class ListUsersAPIView(generics.ListAPIView):
@@ -25,15 +24,12 @@ class ListUsersAPIView(generics.ListAPIView):
         return queryset
 
 
-
 class CreateDeleteView(generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
 
     def get(self, request, *args, **kwargs):
-        # import ipdb; ipdb.set_trace()
-
         if self.request.user.id == kwargs['id']:
             raise ValidationError(['Нельзя подписаться на самого себя'])
         if Subscription.objects.filter(user=self.request.user, author=kwargs['id']):
@@ -53,7 +49,6 @@ class CreateDeleteView(generics.RetrieveDestroyAPIView):
         serializer.save()
     
     def delete(self, request, *args, **kwargs):
-
         if self.request.user.id == kwargs['id']:
             raise ValidationError(['Вы не подписаны на самого себя'])
         subscribe = get_object_or_404(Subscription, user=self.request.user, author=kwargs['id'])
