@@ -4,15 +4,15 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from foodgram.permissions import IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly
+from .permissions import IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly
 
 from .filters import CustomFilter
 from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
                      Shopping_cart, Tag)
 from .paginations import CustomPagination
-from .serializers import (FaviriteSerializer, IngredientSerializer,
+from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, Shopping_cartSerializer,
-                          SmallRecipeSerializer, TagSerialiser)
+                          SmallRecipeSerializer, TagSerializer)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -52,21 +52,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if item:
                 Shopping_cart.objects.get(
                     user=self.request.user, recipe=kwargs['id']
-                    ).delete()
+                ).delete()
                 return Response(
                     'Рецепт успешно удален из списка покупок',
                     status=status.HTTP_204_NO_CONTENT
-                    )
+                )
             else:
                 return Response(
                     'Рецепта нет в списке покупок',
                     status=status.HTTP_400_BAD_REQUEST
-                    )
+                )
         if item:
             return Response(
                 'Рецепт уже есть в списке покупок',
                 status=status.HTTP_400_BAD_REQUEST
-                )
+            )
 
         user = self.request.user
         request.data.update({"user": user.id, "recipe": kwargs['id']})
@@ -88,31 +88,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # import ipdb; ipdb.set_trace()
         item = Favorite.objects.filter(
             user=self.request.user, recipe=kwargs['id']
-            ).exists()
+        ).exists()
 
         if request.method == 'DELETE':
             if item:
                 Favorite.objects.get(
                     user=self.request.user, recipe=kwargs['id']
-                    ).delete()
+                ).delete()
                 return Response(
                     'Рецепт успешно удален из избранного',
                     status=status.HTTP_204_NO_CONTENT
-                    )
+                )
             else:
                 return Response(
                     'Рецепта нет в избранном',
                     status=status.HTTP_400_BAD_REQUEST
-                    )
+                )
         if item:
             return Response(
                 'Рецепт уже есть в избранном',
                 status=status.HTTP_400_BAD_REQUEST
-                )
+            )
 
         user = self.request.user
         request.data.update({"user": user.id, "recipe": kwargs['id']})
-        serializer = FaviriteSerializer(data=request.data)
+        serializer = FavoriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -130,7 +130,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         '''Создает файл с рецептами и ингредиентами для списка покупок'''
         list_recipe = Recipe.objects.filter(
             shoping_cart__user=self.request.user
-            )
+        )
         list_ingredients = {}
         for recipe in list_recipe:
             ingredients = Quantity_ingredients.objects.filter(recipe=recipe)
@@ -150,14 +150,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients_string = ''
         for item in list_ingredients:
             ingredients_string += (
-                str(item) + ' (' + str(list_ingredients[item]['unit']) \
-                + ') - ' + str(list_ingredients[item]['amount']) + '\n'
+                    str(item) + ' (' + str(list_ingredients[item]['unit']) \
+                    + ') - ' + str(list_ingredients[item]['amount']) + '\n'
             )
         if list_resipes == '':
             response = (
                 'Для отображения ингредиентов,\
                 добавте рецепты в список покупок'
-                )
+            )
         else:
             response = (
                 f'Список ваших рецептов: \n \n{list_resipes} \
@@ -169,7 +169,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = TagSerialiser
+    serializer_class = TagSerializer
     queryset = Tag.objects.all()
 
 

@@ -9,26 +9,24 @@ from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Ingredients
-        fields = ('__all__')
+        fields = '__all__'
 
 
 class Shopping_cartSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Shopping_cart
         fields = ('id', 'user', 'recipe')
 
 
-class FaviriteSerializer(serializers.ModelSerializer):
+class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('id', 'user', 'recipe')
 
 
-class TagSerialiser(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
@@ -83,7 +81,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        ''''Показывает есть ли рецепт в избраном у текущего юзера'''
+        """Показывает есть ли рецепт в избраном у текущего юзера"""
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -92,23 +90,23 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_in_shopping_cart(self, obj):
-        ''''Показывает есть ли рецепт в списке покупок у текущего юзера'''
+        """'Показывает есть ли рецепт в списке покупок у текущего юзера"""
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
         if Shopping_cart.objects.filter(
-            user=request.user, recipe=obj
+                user=request.user, recipe=obj
         ).exists():
             return True
         return False
 
     def create(self, validated_data):
-        ''''Переопределяем для сохранения ингредиентов и тегов'''
+        """'Переопределяем для сохранения ингредиентов и тегов"""
         image = validated_data.pop('image')
         author = self.context['request'].user
         recipe = Recipe.objects.create(
             image=image, author=author, **validated_data
-            )
+        )
 
         ingredients = self.initial_data.get('ingredients')
         for ingredient in ingredients:
@@ -125,7 +123,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        ''''Переопределяем для сохранения ингредиентов и тегов'''
+        """'Переопределяем для сохранения ингредиентов и тегов"""
         # import pdb; pdb.set_trace()
         instance.author = validated_data.get('author', instance.author)
         instance.image = validated_data.get('image', instance.image)
@@ -133,7 +131,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get(
             'cooking_time', instance.cooking_time
-            )
+        )
 
         instance.tags.clear()
         tags = self.initial_data.get('tags')
