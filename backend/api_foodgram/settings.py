@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +27,7 @@ SECRET_KEY = 'l!2ej4o@bh947h+ac&3okup!ms-zq9#5&7ahlu0p+i!0*w!2ql'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['web', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -80,15 +82,26 @@ WSGI_APPLICATION = 'api_foodgram.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.environ.get('DB_ENGINE' ),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT')
     }
 }
 
 
-# Password validation
+# Password validationfgh
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -116,21 +129,9 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
-    # 'DEFAULT_PAGINATION_CLASS':
-    #     'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 5
     'SEARCH_PARAM': 'name',
 }
 
-# SIMPLE_JWT = {
-#     'AUTH_HEADER_TYPES': ('JWT',),
-#     # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-#     # 'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-# }
-
-# if DEBUG:
-#     SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(days=365)
-#     SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'] = timedelta(days=365)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -150,14 +151,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media") 
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 DJOSER = {
-    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    # 'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {

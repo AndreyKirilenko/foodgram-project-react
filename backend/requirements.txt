@@ -1,3 +1,4 @@
+asgiref==3.3.3
 Django==3.2.7
 django-filter==21.1
 django-rest-authtoken==2.1.4
@@ -10,3 +11,8 @@ Pillow==8.3.2
 flake8
 isort
 ipdb
+python-dotenv
+gunicorn==20.0.4
+psycopg2-binary==2.8.5
+pytz==2020.1
+sqlparse==0.3.1

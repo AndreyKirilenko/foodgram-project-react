@@ -11,7 +11,7 @@ class Ingredients(models.Model):
 
     class Meta:
         indexes = [
-           models.Index(fields=['name',]),
+           models.Index(fields=['name']),
         ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -38,6 +38,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
 class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='recipe')
     author = models.ForeignKey(
@@ -48,13 +49,13 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredients, 
-        related_name= 'resipe',
+        related_name='resipe',
         through='Quantity_ingredients',
-        through_fields= ('recipe', 'ingredient'),
+        through_fields=('recipe', 'ingredient'),
         verbose_name='Ингридиенты', 
     )
     name = models.CharField(max_length=200, verbose_name='Название рецепта',)
-    image = models.ImageField(upload_to='images',verbose_name='Изображение рецепта',)
+    image = models.ImageField(upload_to='static/image', verbose_name='Изображение рецепта',)
     text = models.TextField(max_length=500, verbose_name='Описание',)
     cooking_time = models.IntegerField(
         validators=[
@@ -76,11 +77,11 @@ class Recipe(models.Model):
         return self.name
 
 
-class Quantity_ingredients(models.Model):  # Количество ингредиентов
+class Quantity_ingredients(models.Model):
     ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE, related_name='amount')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='amount')
     amount = models.IntegerField(
-        validators=[MinValueValidator(1, 'Минимальное значение: 1'),],
+        validators=[MinValueValidator(1, 'Минимальное значение: 1')],
     )
 
     def __str__(self):
