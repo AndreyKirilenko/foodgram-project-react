@@ -28,5 +28,4 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'author',]
-
+    list_display = ['user', 'author', ]

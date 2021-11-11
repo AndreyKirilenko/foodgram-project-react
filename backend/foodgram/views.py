@@ -42,7 +42,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='(?P<id>[0-9]+)/shopping_cart',
         permission_classes=[IsAuthenticated]
     )
-    def add_delete_shopping_cart(self, request, *args, **kwargs):
+    def add_delete_shopping_cart(self, request, **kwargs):
         # import pdb; pdb.set_trace()
         item = Shopping_cart.objects.filter(
             user=self.request.user, recipe=kwargs['id']
@@ -84,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='(?P<id>[0-9]+)/favorite',
         permission_classes=[IsAuthenticated]
     )
-    def add_delete_favorite(self, request, *args, **kwargs):
+    def add_delete_favorite(self, request, **kwargs):
         # import ipdb; ipdb.set_trace()
         item = Favorite.objects.filter(
             user=self.request.user, recipe=kwargs['id']
@@ -127,7 +127,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request):
-        '''Создает файл с рецептами и ингредиентами для списка покупок'''
+        """Создает файл с рецептами и ингредиентами для списка покупок"""
         list_recipe = Recipe.objects.filter(
             shoping_cart__user=self.request.user
         )
@@ -143,7 +143,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                         'unit': item.ingredient.measurement_unit,
                         'amount': item.amount
                     }
-        '''Получаем строки из списков'''
         list_resipes = ''
         for recipe in list_recipe:
             list_resipes += ' ' + str(recipe) + '\n'
