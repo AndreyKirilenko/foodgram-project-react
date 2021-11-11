@@ -23,7 +23,9 @@ class CustomUserAdmin(UserAdmin):
         )
     )
 
-    fieldsets = (*UserAdmin.fieldsets, ('CustomFields', {'fields': ('role', )}))
+    fieldsets = (
+        *UserAdmin.fieldsets, ('CustomFields', {'fields': ('role', )})
+    )
 
 
 @admin.register(Subscription)

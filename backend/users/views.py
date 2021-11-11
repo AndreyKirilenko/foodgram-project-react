@@ -7,9 +7,8 @@ from rest_framework.serializers import ValidationError
 from foodgram.models import User
 from foodgram.paginations import CustomPagination
 
-from .models import CustomUser, Subscription
-from .serializers import (CustomUserSerializer, FullCustomUserSerializer,
-                          SubscriptionSerializer)
+from .models import Subscription
+from .serializers import FullCustomUserSerializer, SubscriptionSerializer
 
 
 class ListUsersAPIView(generics.ListAPIView):
@@ -34,7 +33,7 @@ class CreateDeleteView(generics.RetrieveDestroyAPIView):
             raise ValidationError(['Нельзя подписаться на самого себя'])
         if Subscription.objects.filter(user=self.request.user, author=kwargs['id']):
             raise ValidationError(['Вы уже подписаны на этого автора'])
-        
+
         user = self.request.user
         request.data.update({"user": user.id, "author": kwargs['id']})
         serializer = SubscriptionSerializer(data=request.data)
@@ -44,13 +43,17 @@ class CreateDeleteView(generics.RetrieveDestroyAPIView):
         user = User.objects.get(id=kwargs['id'])
         serializer = FullCustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
     def perform_create(self, serializer):
         serializer.save()
-    
+
     def delete(self, request, *args, **kwargs):
         if self.request.user.id == kwargs['id']:
             raise ValidationError(['Вы не подписаны на самого себя'])
-        subscribe = get_object_or_404(Subscription, user=self.request.user, author=kwargs['id'])
+        subscribe = get_object_or_404(
+            Subscription, user=self.request.user, author=kwargs['id']
+        )
         subscribe.delete()
-        return Response('Вы отписаны от автора', status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            'Вы отписаны от автора', status=status.HTTP_204_NO_CONTENT
+        )
