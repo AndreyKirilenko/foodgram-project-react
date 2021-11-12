@@ -10,7 +10,7 @@ from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
 from .paginations import CustomPagination
 from .permissions import IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipeSerializer, Shopping_cartSerializer,
+                          RecipeSerializer, ShoppingCartSerializer,
                           SmallRecipeSerializer, TagSerializer)
 
 
@@ -43,7 +43,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def add_delete_shopping_cart(self, request, **kwargs):
-        # import pdb; pdb.set_trace()
         item = Shopping_cart.objects.filter(
             user=self.request.user, recipe=kwargs['id']
         ).exists()
@@ -70,7 +69,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = self.request.user
         request.data.update({"user": user.id, "recipe": kwargs['id']})
-        serializer = Shopping_cartSerializer(data=request.data)
+        serializer = ShoppingCartSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -85,7 +84,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def add_delete_favorite(self, request, **kwargs):
-        # import ipdb; ipdb.set_trace()
         item = Favorite.objects.filter(
             user=self.request.user, recipe=kwargs['id']
         ).exists()

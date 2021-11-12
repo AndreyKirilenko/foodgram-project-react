@@ -14,7 +14,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Shopping_cartSerializer(serializers.ModelSerializer):
+class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shopping_cart
         fields = ('id', 'user', 'recipe')
@@ -32,7 +32,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
-class Quantity_ingredientsSerializer(serializers.ModelSerializer):
+class QuantityingredientsSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -56,7 +56,7 @@ class SmallRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = Quantity_ingredientsSerializer(
+    ingredients = QuantityingredientsSerializer(
         source='amount', many=True, read_only=True
     )
     author = CustomUserSerializer(read_only=True)
