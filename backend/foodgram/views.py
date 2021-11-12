@@ -31,7 +31,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart', None
         )
-        if is_in_shopping_cart is not None and self.request.user.is_authenticated:
+        if is_in_shopping_cart is not None and \
+                self.request.user.is_authenticated:
             queryset = queryset.filter(shoping_cart__user=self.request.user)
         return queryset
 
@@ -148,7 +149,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients_string = ''
         for item in list_ingredients:
             ingredients_string += (
-                    str(item) + ' (' + str(list_ingredients[item]['unit']) \
+                    str(item) + ' (' + str(list_ingredients[item]['unit'])
                     + ') - ' + str(list_ingredients[item]['amount']) + '\n'
             )
         if list_resipes == '':
@@ -162,7 +163,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 \nДля приготовления понадобятся: \n \n{ingredients_string} \
                 \n \n -- foodgram --')
         response = HttpResponse(response, 'Content-Type: application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shopping_cart"'
+        response['Content-Disposition'] = (
+            'attachment; filename="shopping_cart"'
+        )
         return response
 
 

@@ -3,10 +3,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-
 from foodgram.models import User
 from foodgram.paginations import CustomPagination
-
 from .models import Subscription
 from .serializers import FullCustomUserSerializer, SubscriptionSerializer
 
@@ -31,7 +29,10 @@ class CreateDeleteView(generics.RetrieveDestroyAPIView):
     def get(self, request, *args, **kwargs):
         if self.request.user.id == kwargs['id']:
             raise ValidationError(['Нельзя подписаться на самого себя'])
-        if Subscription.objects.filter(user=self.request.user, author=kwargs['id']):
+        if Subscription.objects.filter(
+            user=self.request.user,
+            author=kwargs['id']
+        ):
             raise ValidationError(['Вы уже подписаны на этого автора'])
 
         user = self.request.user

@@ -1,8 +1,5 @@
-import re
-
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 
 from foodgram.models import Recipe
 
@@ -31,11 +28,6 @@ class CustomUserSerializer(UserCreateSerializer):
         return Subscription.objects.filter(
             user=request.user, author=obj
             ).exists()
-
-    def validate_username(self, value):
-        if re.match('[\w]', value) is None:
-            raise ValidationError(f'{value} не соответствует маске ')
-        return value
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
