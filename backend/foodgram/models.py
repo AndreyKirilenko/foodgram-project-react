@@ -45,17 +45,17 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     tags = models.ManyToManyField(
-        Tag, verbose_name='Теги', related_name='recipe'
+        Tag, verbose_name='Теги', related_name='recipes'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="recipe",
+        related_name="recipes",
         verbose_name='Автор рецепта',
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        related_name='resipe',
+        related_name='resipes',
         through='QuantityIngredient',
         through_fields=('recipe', 'ingredient'),
         verbose_name='Ингридиенты',
@@ -95,6 +95,13 @@ class QuantityIngredient(models.Model):
     amount = models.IntegerField(
         validators=[MinValueValidator(1, 'Минимальное значение: 1')],
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'], name='unicue_ingredient'
+            ),
+        ]
 
     def __str__(self):
         return f'{self.ingredient}, {self.amount}'

@@ -54,15 +54,6 @@
         }
     },
     {
-        "model": "foodgram.tag",
-        "pk": 7,
-        "fields": {
-            "name": "\u043f\u0442\u0438\u0446\u0430",
-            "color": "#08244a",
-            "slug": "ptica"
-        }
-    },
-    {
         "model": "foodgram.ingredient",
         "pk": 4087,
         "fields": {
