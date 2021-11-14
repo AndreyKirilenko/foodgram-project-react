@@ -11,7 +11,7 @@ docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py collectstatic
 docker-compose exec web python manage.py createsuperuser
-docker-compose exec web python manage.py loaddata fixtures/ingredients_dump.json --app foodgram.ingredients
+docker-compose exec web python manage.py loaddata fixtures/base_dump.json --app foodgram.ingredients
 
 Технологии
 

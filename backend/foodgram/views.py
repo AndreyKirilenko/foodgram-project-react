@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import CustomFilter
-from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
+from .models import (Favorite, Ingredient, QuantityIngredient, Recipe,
                      Shopping_cart, Tag)
 from .paginations import CustomPagination
 from .permissions import IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly
@@ -131,7 +131,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         list_ingredients = {}
         for recipe in list_recipe:
-            ingredients = Quantity_ingredients.objects.filter(recipe=recipe)
+            ingredients = QuantityIngredient.objects.filter(recipe=recipe)
             for item in ingredients:
                 name = item.ingredient
                 if name.name in list_ingredients:
@@ -172,8 +172,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
 
 
-class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
-    queryset = Ingredients.objects.all()
+    queryset = Ingredient.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']

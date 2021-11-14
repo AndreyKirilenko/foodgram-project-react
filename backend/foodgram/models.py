@@ -5,7 +5,7 @@ from django.db import models
 User = get_user_model()
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(
         max_length=100, verbose_name='Название ингредиента'
     )
@@ -54,9 +54,9 @@ class Recipe(models.Model):
         verbose_name='Автор рецепта',
     )
     ingredients = models.ManyToManyField(
-        Ingredients,
+        Ingredient,
         related_name='resipe',
-        through='Quantity_ingredients',
+        through='QuantityIngredient',
         through_fields=('recipe', 'ingredient'),
         verbose_name='Ингридиенты',
     )
@@ -85,9 +85,9 @@ class Recipe(models.Model):
         return self.name
 
 
-class Quantity_ingredients(models.Model):
+class QuantityIngredient(models.Model):
     ingredient = models.ForeignKey(
-        Ingredients, on_delete=models.CASCADE, related_name='amount'
+        Ingredient, on_delete=models.CASCADE, related_name='amount'
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name='amount'

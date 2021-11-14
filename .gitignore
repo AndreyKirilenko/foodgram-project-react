@@ -135,6 +135,5 @@ dmypy.json
 # .idea
 .idea
 
-migrations/
 media/
 dump.json

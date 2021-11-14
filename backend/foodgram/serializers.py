@@ -3,13 +3,13 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
 
-from .models import (Favorite, Ingredients, Quantity_ingredients, Recipe,
+from .models import (Favorite, Ingredient, QuantityIngredient, Recipe,
                      Shopping_cart, Tag)
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = '__all__'
 
 
@@ -31,7 +31,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
-class QuantityingredientsSerializer(serializers.ModelSerializer):
+class QuantityIngredientSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -39,7 +39,7 @@ class QuantityingredientsSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Quantity_ingredients
+        model = QuantityIngredient
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
@@ -55,7 +55,7 @@ class SmallRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = QuantityingredientsSerializer(
+    ingredients = QuantityIngredientSerializer(
         source='amount', many=True, read_only=True
     )
     author = CustomUserSerializer(read_only=True)
@@ -109,7 +109,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         ingredients = self.initial_data.get('ingredients')
         for ingredient in ingredients:
-            Quantity_ingredients.objects.create(
+            QuantityIngredient.objects.create(
                 ingredient_id=ingredient.get('id'),
                 recipe=recipe,
                 amount=ingredient.get('amount')
@@ -123,7 +123,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """'Переопределяем для сохранения ингредиентов и тегов"""
-        # import pdb; pdb.set_trace()
         instance.author = validated_data.get('author', instance.author)
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
@@ -140,7 +139,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.ingredients.clear()
         ingredients = self.initial_data.get('ingredients')
         for ingredient in ingredients:
-            Quantity_ingredients.objects.create(
+            QuantityIngredient.objects.create(
                 ingredient_id=ingredient.get('id'),
                 recipe=instance,
                 amount=ingredient.get('amount')
