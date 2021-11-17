@@ -12,12 +12,12 @@ class CustomUserSerializer(UserCreateSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "password",
+            id,
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
             'is_subscribed'
             )
 
@@ -49,7 +49,7 @@ class FullCustomUserSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            "email", "id", "username", "first_name", "last_name",
+            'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count',
             )
 
@@ -61,10 +61,10 @@ class FullCustomUserSerializer(CustomUserSerializer):
             return FollowRecipeSerializer(recipes, many=True).data
 
         recipes_limit = request.query_params.get('recipes_limit', None)
-        if recipes_limit is not None:
-            recipes = Recipe.objects.filter(author=obj)[:int(recipes_limit)]
-        else:
+        if recipes_limit is None:
             recipes = Recipe.objects.filter(author=obj)
+        else:
+            recipes = Recipe.objects.filter(author=obj)[:int(recipes_limit)]
         return FollowRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
@@ -75,4 +75,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = "__all__"
+        fields = '__all__'

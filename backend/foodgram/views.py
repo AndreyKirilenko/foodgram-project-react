@@ -109,7 +109,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
         user = self.request.user
-        request.data.update({"user": user.id, "recipe": kwargs['id']})
+        request.data.update({'user': user.id, 'recipe': kwargs['id']})
         serializer = FavoriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

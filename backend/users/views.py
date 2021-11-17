@@ -34,21 +34,17 @@ class CreateDeleteView(generics.RetrieveDestroyAPIView):
         if Subscription.objects.filter(
             user=self.request.user,
             author=kwargs['id']
-        ):
+        ).exists():
             raise ValidationError(['Вы уже подписаны на этого автора'])
 
         user = self.request.user
-        request.data.update({"user": user.id, "author": kwargs['id']})
+        request.data.update({'user': user.id, 'author': kwargs['id']})
         serializer = SubscriptionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        user = User.objects.get(id=kwargs['id'])
+        serializer.save()
+        user = get_object_or_404(User, id=kwargs['id'])
         serializer = FullCustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        serializer.save()
 
     def delete(self, request, *args, **kwargs):
         if self.request.user.id == kwargs['id']:
