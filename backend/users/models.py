@@ -1,14 +1,17 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
 
 
 class CustomUser(AbstractUser):
 
     class UserRole(models.TextChoices):
-        USER = 'USER', _('user')
-        MODERATOR = 'MODERATOR', _('moderator')
-        ADMIN = 'ADMIN', _('admin')
+        USER = USER
+        MODERATOR = MODERATOR
+        ADMIN = ADMIN
 
     username = models.CharField(null=False, unique=True, max_length=150)
     email = models.EmailField(null=False, unique=True, max_length=250)
