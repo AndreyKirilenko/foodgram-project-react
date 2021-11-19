@@ -12,7 +12,7 @@ class CustomUserSerializer(UserCreateSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            id,
+            'id',
             'username',
             'first_name',
             'last_name',

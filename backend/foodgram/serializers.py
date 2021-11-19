@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from users.serializers import CustomUserSerializer
 
@@ -103,44 +104,54 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(
             image=image, author=author, **validated_data
         )
-
-        ingredients = self.initial_data.get('ingredients')
-        for ingredient in ingredients:
-            QuantityIngredient.objects.create(
-                ingredient_id=ingredient.get('id'),
-                recipe=recipe,
-                amount=ingredient.get('amount')
-            )
-
-        tags = self.initial_data.get('tags')
-        for tag_id in tags:
-            recipe.tags.add(get_object_or_404(Tag, pk=tag_id))
-
+        save_tags_and_ingredients(self, recipe)
         return recipe
 
     def update(self, instance, validated_data):
         """'Переопределяем для сохранения ингредиентов и тегов"""
-        instance.author = validated_data.get('author', instance.author)
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time', instance.cooking_time
-        )
-
         instance.tags.clear()
-        tags = self.initial_data.get('tags')
-        for tag in tags:
-            instance.tags.add(get_object_or_404(Tag, pk=tag))
-
         instance.ingredients.clear()
+        save_tags_and_ingredients(self, instance)
+        return super().update(instance, validated_data)
+
+    def validate(self, data):
+        errors = []
+        if type(data['cooking_time']) is int:
+            if data['cooking_time'] < 1:
+                errors.append('Время приготовления меньше 1')
+        else:
+            errors.append('Время приготовления не является числом')
+
+        tags = self.initial_data.get('tags')
+        uniq_tag = [0]
+        for tag in tags:
+            if uniq_tag[-1] == tag:
+                errors.append('Вы добавили одинаковые теги')
+                break
+            uniq_tag.append(tag)
+
         ingredients = self.initial_data.get('ingredients')
+        uniq_ingr = [0]
         for ingredient in ingredients:
-            QuantityIngredient.objects.create(
-                ingredient_id=ingredient.get('id'),
-                recipe=instance,
-                amount=ingredient.get('amount')
-            )
-        instance.save()
-        return instance
-        # return super().update(instance, validated_data)
+            if uniq_ingr[-1] == ingredient['id']:
+                errors.append('Вы добавили одинаковые ингредиенты')
+                break
+            uniq_ingr.append(ingredient['id'])
+
+        if errors:
+            raise ValidationError(errors)
+        return data
+
+
+def save_tags_and_ingredients(self, obj):
+    tags = self.initial_data.get('tags')
+    for tag in tags:
+        obj.tags.add(get_object_or_404(Tag, pk=tag))
+
+    ingredients = self.initial_data.get('ingredients')
+    for ingredient in ingredients:
+        QuantityIngredient.objects.create(
+            ingredient_id=ingredient.get('id'),
+            recipe=obj,
+            amount=ingredient.get('amount')
+        )
