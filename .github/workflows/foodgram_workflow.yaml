@@ -72,41 +72,41 @@ jobs:
           context: ./frontend
           tags: akirosan/foodgram_frontend:latest
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: 
-      - build_backend_and_push_to_docker_hub
-      - build_frontend_and_push_to_docker_hub
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: 
+  #     - build_backend_and_push_to_docker_hub
+  #     - build_frontend_and_push_to_docker_hub
 
-    steps:
-      - name: executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          stack_file_name: ./infra/docker-compose.yml
-          script: |
-            sudo docker pull akirosan/foodgram_frontend
-            sudo docker pull akirosan/foodgram_backend
+  #   steps:
+  #     - name: executing remote ssh commands to deploy
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.HOST }}
+  #         username: ${{ secrets.USER }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         passphrase: ${{ secrets.PASSPHRASE }}
+  #         stack_file_name: docker-compose.yml
+  #         script: |
+  #           sudo docker pull akirosan/foodgram_frontend
+  #           sudo docker pull akirosan/foodgram_backend
             
-            sudo docker-compose stop
-            sudo docker-compose rm web
-            sudo docker system prune
-            # Создаст файл для переменных окружения
-            touch .env 
-            # Наполнит файл переменными окружения из секретов GitHub
-            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-            echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            # echo DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }} >> .env
-            # echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
-            sudo docker-compose up -d
+  #           sudo docker-compose stop
+  #           sudo docker-compose rm web
+  #           sudo docker system prune
+  #           # Создаст файл для переменных окружения
+  #           touch .env 
+  #           # Наполнит файл переменными окружения из секретов GitHub
+  #           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+  #           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+  #           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+  #           echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+  #           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+  #           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+  #           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+  #           # echo DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }} >> .env
+  #           # echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+  #           sudo docker-compose up -d
   send_message:
     runs-on: ubuntu-latest
     needs: 
