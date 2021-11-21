@@ -1,12 +1,11 @@
-from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from users.serializers import CustomUserSerializer
-
 from .models import (Favorite, Ingredient, QuantityIngredient, Recipe,
                      Shopping_cart, Tag)
+from .utils import save_tags_and_ingredients
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -133,25 +132,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get('ingredients')
         uniq_ingr = [0]
         for ingredient in ingredients:
+            if ingredient['amount'] < 1:
+                errors.append('Колличество ингредиента не может быть меньше 1')
             if uniq_ingr[-1] == ingredient['id']:
                 errors.append('Вы добавили одинаковые ингредиенты')
-                break
             uniq_ingr.append(ingredient['id'])
 
         if errors:
             raise ValidationError(errors)
         return data
-
-
-def save_tags_and_ingredients(self, obj):
-    tags = self.initial_data.get('tags')
-    for tag in tags:
-        obj.tags.add(get_object_or_404(Tag, pk=tag))
-
-    ingredients = self.initial_data.get('ingredients')
-    for ingredient in ingredients:
-        QuantityIngredient.objects.create(
-            ingredient_id=ingredient.get('id'),
-            recipe=obj,
-            amount=ingredient.get('amount')
-        )

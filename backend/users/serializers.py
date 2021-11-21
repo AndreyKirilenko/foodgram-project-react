@@ -2,7 +2,6 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from foodgram.models import Recipe
-
 from .models import CustomUser, Subscription
 
 
@@ -60,7 +59,7 @@ class FullCustomUserSerializer(CustomUserSerializer):
             recipes = Recipe.objects.filter(author=obj)
             return FollowRecipeSerializer(recipes, many=True).data
 
-        recipes_limit = request.query_params.get('recipes_limit', None)
+        recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit is None:
             recipes = Recipe.objects.filter(author=obj)
         else:

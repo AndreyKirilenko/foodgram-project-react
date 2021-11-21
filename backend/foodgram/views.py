@@ -116,40 +116,56 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Создает файл с рецептами и ингредиентами для списка покупок"""
         list_recipe = Recipe.objects.filter(
             shoping_cart__user=self.request.user
+        ).values_list('id', flat=True)
+        list_quantity_ingredient = QuantityIngredient.objects.filter(
+            recipe__in=list_recipe
         )
         list_ingredients = {}
-        for recipe in list_recipe:
-            ingredients = QuantityIngredient.objects.filter(recipe=recipe)
-            list_ingredient = ingredients.values_list(
-                'ingredient__name', 'ingredient__measurement_unit', 'amount'
-            )
-            for item in list_ingredient:
-                name = item[0]
-                if name in list_ingredients:
-                    list_ingredients[name]['amount'] += item[2]
-                else:
-                    list_ingredients[name] = {
-                        'unit': item[1],
-                        'amount': item[2]
-                    }
+        for quantity_ingredient in list_quantity_ingredient:
+            ingredient = quantity_ingredient.ingredient
+            if ingredient.name in list_ingredients:
+                list_ingredients[ingredient.name][
+                    'amount'] += quantity_ingredient.amount
+            else:
+                list_ingredients[ingredient.name] = {
+                    'unit': ingredient.measurement_unit,
+                    'amount': quantity_ingredient.amount
+                }
 
-        list_resipes = ''
-        for recipe in list_recipe:
-            list_resipes += ' ' + str(recipe) + '\n'
+        list_recipes = Recipe.objects.filter(
+            shoping_cart__user=self.request.user
+        ).values_list('name', flat=True)
+
+        """собираем список рецептов"""
+        list_resipes_result = {}
+        for recipe in list_recipes:
+            if recipe in list_resipes_result:
+                list_resipes_result[recipe]['count'] += 1
+            else:
+                list_resipes_result[recipe] = {
+                    'count': 1
+                }
+        recipes_string = ''
+        for item in list_resipes_result:
+            recipes_string += (
+                    str(item) + ' - ' + str(list_resipes_result[item]['count'])
+                    + '\n'
+            )
+        """собираем список ингредиентов"""
         ingredients_string = ''
         for item in list_ingredients:
             ingredients_string += (
                     str(item) + ' (' + str(list_ingredients[item]['unit'])
                     + ') - ' + str(list_ingredients[item]['amount']) + '\n'
             )
-        if list_resipes == '':
+        if list_resipes_result == {}:
             response = (
                 'Для отображения ингредиентов,\
                 добавте рецепты в список покупок'
             )
         else:
             response = (
-                f'Список ваших рецептов: \n \n{list_resipes} \
+                f'Список рецептов в корзине: \n \n{recipes_string} \
                 \nДля приготовления понадобятся: \n \n{ingredients_string} \
                 \n \n -- foodgram --')
         response = HttpResponse(response, 'Content-Type: application/pdf')
