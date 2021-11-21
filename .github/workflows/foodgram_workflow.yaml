@@ -67,8 +67,8 @@ jobs:
         uses: docker/build-push-action@v2 # Выполняет push образа в DockerHub 
         with:
           push: true
-          context: ./infra
-          tags: akirosan/foodgram_frintend:latest
+          context: ./frontend
+          tags: akirosan/foodgram_frontend:latest
 
   # deploy:
   #   runs-on: ubuntu-latest
