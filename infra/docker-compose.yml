@@ -15,7 +15,7 @@ services:
     env_file:
       - ../backend/.env
 
-  web:
+  backend:
     build:
       context: ../backend
       dockerfile: Dockerfile
@@ -41,7 +41,7 @@ services:
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
     depends_on:
-      - web
+      - backend
 
 volumes:
   postgres_data:
