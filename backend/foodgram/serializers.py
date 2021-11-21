@@ -132,7 +132,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get('ingredients')
         uniq_ingr = [0]
         for ingredient in ingredients:
-            if ingredient['amount'] < 1:
+            if int(ingredient['amount']) < 1:
                 errors.append('Колличество ингредиента не может быть меньше 1')
             if uniq_ingr[-1] == ingredient['id']:
                 errors.append('Вы добавили одинаковые ингредиенты')
