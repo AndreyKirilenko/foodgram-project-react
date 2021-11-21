@@ -15,7 +15,7 @@ class Ingredient(models.Model):
 
     class Meta:
         indexes = [
-           models.Index(fields=['name']),
+            models.Index(fields=['name']),
         ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'

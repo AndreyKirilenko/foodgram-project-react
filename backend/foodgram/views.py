@@ -148,15 +148,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipes_string = ''
         for item in list_resipes_result:
             recipes_string += (
-                    str(item) + ' - ' + str(list_resipes_result[item]['count'])
-                    + '\n'
+                str(item) + ' - ' + str(list_resipes_result[item]['count'])
+                + '\n'
             )
         """собираем список ингредиентов"""
         ingredients_string = ''
         for item in list_ingredients:
             ingredients_string += (
-                    str(item) + ' (' + str(list_ingredients[item]['unit'])
-                    + ') - ' + str(list_ingredients[item]['amount']) + '\n'
+                str(item) + ' (' + str(list_ingredients[item]['unit'])
+                + ') - ' + str(list_ingredients[item]['amount']) + '\n'
             )
         if list_resipes_result == {}:
             response = (

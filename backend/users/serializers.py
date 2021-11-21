@@ -18,7 +18,7 @@ class CustomUserSerializer(UserCreateSerializer):
             'email',
             'password',
             'is_subscribed'
-            )
+        )
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -26,7 +26,7 @@ class CustomUserSerializer(UserCreateSerializer):
             return False
         return Subscription.objects.filter(
             user=request.user, author=obj
-            ).exists()
+        ).exists()
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
@@ -50,7 +50,7 @@ class FullCustomUserSerializer(CustomUserSerializer):
         fields = (
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count',
-            )
+        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')
