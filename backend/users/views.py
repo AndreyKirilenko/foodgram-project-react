@@ -6,7 +6,6 @@ from rest_framework.serializers import ValidationError
 
 from foodgram.models import User
 from foodgram.paginations import CustomPagination
-
 from .models import Subscription
 from .serializers import FullCustomUserSerializer, SubscriptionSerializer
 
