@@ -36,24 +36,6 @@
         }
     },
     {
-        "model": "foodgram.tag",
-        "pk": 5,
-        "fields": {
-            "name": "\u043d\u0430\u043f\u0438\u0442\u043a\u0438",
-            "color": "#6c8c01",
-            "slug": "napitki"
-        }
-    },
-    {
-        "model": "foodgram.tag",
-        "pk": 6,
-        "fields": {
-            "name": "\u043c\u044f\u0441\u043e",
-            "color": "#610b00",
-            "slug": "myaso"
-        }
-    },
-    {
         "model": "foodgram.ingredient",
         "pk": 4087,
         "fields": {
