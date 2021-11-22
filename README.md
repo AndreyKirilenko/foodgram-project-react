@@ -6,7 +6,7 @@
 
 <img src="readme_assets/site_image.png">
 
-Демонстрационную версию можно посмотреть <a href ='http://51.250.27.63/recipes' target='_blank'>здесь</a>
+Демонстрационную версию можно посмотреть <a href ='http://51.250.27.63/recipes' target='blank'>здесь</a>
 
 
 ## Локальная установка. 
@@ -45,19 +45,19 @@
 ```
 * Выполните миграции
 ```bash
-    docker-compose exec web python manage.py migrate --noinput
+    docker-compose exec backend python manage.py migrate --noinput
 ```
 * Создайте пользователя
 ```bash
-    docker-compose exec web python manage.py createsuperuser
+    docker-compose exec backend python manage.py createsuperuser
 ```
 * Соберите статику
 ```bash
-    docker-compose exec web python manage.py collectstatic
+    docker-compose exec backend python manage.py collectstatic
 ```
 * Импортируйте дамп в базу данных
 ```bash
-    docker-compose exec web python manage.py loaddata fixtures/base_dump.json
+    docker-compose exec backend python manage.py loaddata fixtures/base_dump.json
 ```
 
 ## Технологии
@@ -66,5 +66,4 @@ Python, Django, DRF, Docker, Git
 ## Автор
 Кириленко Андрей
 
-Развернутый на сервере проект можно посмотреть <a href='http://84.201.179.146/api/v1/'>здесь</a>
-![example workflow](https://github.com/Akirosan/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+![example workflow](https://github.com/Akirosan/foodgram-project-react/actions/workflows/foodgram_workflow.yaml/badge.svg)
